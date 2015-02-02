@@ -118,7 +118,7 @@ for prob in pvalues3:
     liks3=binomPMF(5,4,p=prob)
     Lik3.append(liks3)
 print(Lik3)
-max(Lik3)
+max(Lik3)####associated with 0.8
 """
 Now let's try this all again, but with more data. This time, we'll use 20 draws from our cup of marbles.
 """
@@ -191,22 +191,25 @@ def mle(n,k,pCurr,diff):
     vpCurr=binomPMF(n,k,p=pCurr)
     vpUp=binomPMF(n,k,p=pUp)
     vpDown=binomPMF(n,k,p=pDown)
-    while (vpCurr < vpUp):
-        pCurr=pUp
-        vpCurr=binomPMF(n,k,p=pCurr)
-        pUp=pCurr+diff
-        vpUp=binomPMF(n,k,p=pUp)
-    return pUp
-    while (vpCurr < vpDown):
-        pCurr=pDown
-        vpCurr=binomPMF(n,k,p=pCurr)
-        pDown=pCurr-diff
-        vpDown=binomPMF(n,k,p=pDown)
-    return pDown
+    if (vpCurr < vpUp):    
+        while (vpCurr < vpUp):
+            pCurr=pUp
+            vpCurr=binomPMF(n,k,p=pCurr)
+            pUp=pCurr+diff
+            vpUp=binomPMF(n,k,p=pUp)
+        return pUp
+    else:
+        while (vpCurr < vpDown):
+            pCurr=pDown
+            vpCurr=binomPMF(n,k,p=pCurr)
+            pDown=pCurr-diff
+            vpDown=binomPMF(n,k,p=pDown)
+        return pDown
     
 
-mle(5,4,0.01,0.000001)
+banana=mle(5,4,0.9,0.0001)
         
+print(banana)
 """
 In the exercise above, you tried to find an intuitive cutoff for likelihood ratio
 scores that would give you a reasonable interval in which to find the true value of
@@ -234,7 +237,7 @@ def DiscreteSample (xk,pk,siz):
     return x
 
 sim=[]
-for i in range (1000):
+for i in range (10):
     outcome=DiscreteSample(xk=[0,1],pk=[0.3,0.7],siz=200)
     counting1=outcome.count(1)
     sim.append(counting1)
@@ -243,19 +246,67 @@ print sim
 # from scipy.stats import binom
 # binom.rvs(n,p) will then produce a draw from the corresponding binomial.
 # Now find ML parameter estimates for each of these trials
-ML=[]
+MLE=[]
 for y in sim:
-    estimate=mle(200,k=y,pCurr=0.01,diff=0.0001)
-    ML.append(estimate)
-print(ML)
+    estimate=mle(200,k=y,pCurr=0.01,diff=0.001)
+    MLE.append(estimate)
+print(MLE)
+
 #to be continue...
 # Calculate likelihood ratios comparing L(trueP) in the numerator to the maximum
 # likelihood (ML) in the denominator. Sort the results and find the value
 # corresponding to the 95th percentile.
+####Getting the L(trueP):
+LtrueP=[]
+for t in sim:
+    Ltp=binomPMF(200,k=t,p=0.7)
+    LtrueP.append(Ltp)
+print LtrueP
+
+######Getting the ML values:
+def ml(n,k,pCurr,diff):
+    pUp=pCurr+diff
+    pDown=pCurr-diff
+    vpCurr=binomPMF(n,k,p=pCurr)
+    vpUp=binomPMF(n,k,p=pUp)
+    vpDown=binomPMF(n,k,p=pDown)
+    if (vpCurr < vpUp):    
+        while (vpCurr < vpUp):
+            pCurr=pUp
+            vpCurr=binomPMF(n,k,p=pCurr)
+            pUp=pCurr+diff
+            vpUp=binomPMF(n,k,p=pUp)
+        return vpUp
+    else:
+        while (vpCurr < vpDown):
+            pCurr=pDown
+            vpCurr=binomPMF(n,k,p=pCurr)
+            pDown=pCurr-diff
+            vpDown=binomPMF(n,k,p=pDown)
+        return vpDown
+
+ML=[]
+for y in sim:
+    estimate=ml(200,k=y,pCurr=0.01,diff=0.001)
+    ML.append(estimate)
+print(ML)
+#########Getting the Ratios
+LRatios = [float(b) / float(m) for b,m in zip(LtrueP, ML)]
+print (LRatios)
+from numpy import percentile
+print percentile(LRatios,95)
+
 # Now, convert the likelihood ratios (LRs) to -2ln(LRs) values.
-# Find the 95th percentile of these values. Compare these values to this table:
-# https://people.richland.edu/james/lecture/m170/tbl-chi.html. In particular, look
+from math import log
+neg2ln=[]
+for w in LRatios:
+    loglikneg=(-2)*(log(w))
+    neg2ln.append(loglikneg)
+print neg2ln
+    
+# Find the 95th percentile of these values. Compare these values to this table:# https://people.richland.edu/james/lecture/m170/tbl-chi.html. In particular, look
 # at the 0.05 column. Do any of these values seem similar to the one you calculated?
+print percentile(neg2ln,95)
 # Any idea why that particular cell would be meaningful?
 # Based on your results (and the values in the table), what LR statistic value
 # [-2ln(LR)] indicates that a null value of p is far enough away from the ML value
