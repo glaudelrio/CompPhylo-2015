@@ -197,14 +197,14 @@ def mle(n,k,pCurr,diff):
             vpCurr=binomPMF(n,k,p=pCurr)
             pUp=pCurr+diff
             vpUp=binomPMF(n,k,p=pUp)
-        return pUp
+        return pCurr
     else:
         while (vpCurr < vpDown):
             pCurr=pDown
             vpCurr=binomPMF(n,k,p=pCurr)
             pDown=pCurr-diff
             vpDown=binomPMF(n,k,p=pDown)
-        return pDown
+        return pCurr
     
 
 banana=mle(5,4,0.9,0.0001)
@@ -276,14 +276,14 @@ def ml(n,k,pCurr,diff):
             vpCurr=binomPMF(n,k,p=pCurr)
             pUp=pCurr+diff
             vpUp=binomPMF(n,k,p=pUp)
-        return vpUp
+        return vpCurr
     else:
         while (vpCurr < vpDown):
             pCurr=pDown
             vpCurr=binomPMF(n,k,p=pCurr)
             pDown=pCurr-diff
             vpDown=binomPMF(n,k,p=pDown)
-        return vpDown
+        return vpCurr
 
 ML=[]
 for y in sim:
