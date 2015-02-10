@@ -70,7 +70,8 @@ def discSamp(events,probs):
             return events[i]
     return None
 # Write your Markov chain simulator below. Record the states of your chain in
-# a list. Draw a random state to initiate the chain.    
+# a list. Draw a random state to initiate the chain. 
+####My states are 0 and 1:
 def MarkovChain (x,matrix):
     rn=uniform(low=0.0, high=1.0, size=None)
     currState=discSamp(events=[0,1],probs=[rn,1-rn])
@@ -83,13 +84,7 @@ def MarkovChain (x,matrix):
 MarkovChain (40,matrix=mat)
 
 # Run a simulation of 10 steps and print the output.
-MarkovChain (10, matrix=mat)
+m=MarkovChain (10, matrix=mat)
+print m
 
 ###############################################################################
-# ----> Try to finish the above lines before Tues, Feb. 10th <----
-# Now try running 100 simulations of 100 steps each. How often does the chain
-# end in each state? How does this change as you change the transition matrix?
-# Try defining a state space for nucleotides: A, C, G, and T. Now define a
-# transition matrix with equal probabilities of change between states.
-# Again, run 100 simulations of 100 steps and look at the ending states. Then
-# try changing the transition matrix.
