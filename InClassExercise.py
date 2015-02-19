@@ -147,17 +147,26 @@ print repfreq1
 ####I noticed that the frequencies converge to a stationary frequency, in this case near by 0.63.
 mat3=[[0.23,0.77],[0.39,0.61]]
 list2=[]
-for i in range(1000):
-    result=MarkovChain2 (25,matrix=mat3)
+for i in range(10000):
+    result=MarkovChain2 (100,matrix=mat3)
     list2.append(result)
     
 print list2
 repfreq2=mcStateFreqSum(sims=list2,state=0)
 print repfreq2
-####The state freq values change, but also seem to converge to a sationary frequency.
+####The state freq values change, but also seem to converge to a sationary frequency (0.43)
 
 # Now, calculate a vector of probabilities for the focal state (e.g., 'a')
 # based on the transition matrix directly (not by simulation). How do these
 # values compare to the simulated frequencies?
+mat4=[[0.77,0.23],[0.39,0.61]]###This is a variation of my original matrix mat2, just because my Markov Function reverts the propabilities
+import numpy
+numpy.linalg.matrix_power(M=mat4,n=1000)
+#####Also got 0.63 as a probability.
+
+mat5=[[0.23,0.77],[0.61,0.39]]
+numpy.linalg.matrix_power(M=mat5,n=1000)
+####Got 0.44 as a probability.
+####The stationary frequency is quite close to the probabilities calculated.
 
 
